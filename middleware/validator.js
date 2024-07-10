@@ -38,8 +38,39 @@ const validateUpdateQueue = (req, res, next) => {
     next();
 };
 
+const validateMemberCreateOrDelete = (req, res, next) => {
+    const { queue, name } = req.body;
+
+    if (typeof queue !== 'string' ||
+        typeof name !== 'string' ) {
+        return res.status(400).json({ error: 'Invalid data types' });
+    }
+
+    next();
+};
+
+const validateMemberUpdate = (req, res, next) => {
+    const { queue, name, newname, newqueue } = req.body;
+
+    if (typeof queue !== 'string' ||
+        typeof name !== 'string'||
+        typeof newqueue !== 'string' ||
+        typeof newname !== 'string'
+    
+    ) {
+        return res.status(400).json({ error: 'Invalid data types' });
+    }
+
+    next();
+};
+
+
+
+
 module.exports = {
     validateCreate,
     validateDelete,
-    validateUpdateQueue
+    validateUpdateQueue,
+    validateMemberCreateOrDelete,
+    validateMemberUpdate
 };
