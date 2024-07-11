@@ -6,15 +6,15 @@ const { validateMemberCreate, validateUpdateQueue, validateMemberCreateOrDelete,
 router.get('/',(req,res)=>{
     res.send('WELCOME TO QUEUE CONFIG GENERATOR')
 })
-router.post('/create',validateMemberCreateOrDelete,async(req,res)=>{
+router.post('/add',validateMemberCreateOrDelete,async(req,res)=>{
     try {
         const { name, queue } = req.body
         const response = await addMembers(queue, name)
         res.send(response)
     }
     catch (err) {
-        console.log('ERR::::::', err)
-        res.status(400).json({error:"Internal server error"})
+        
+        res.status(400).json({error:err.message})
     }
 })
 router.delete('/delete',validateMemberCreateOrDelete,async(req,res)=>{
@@ -24,8 +24,7 @@ router.delete('/delete',validateMemberCreateOrDelete,async(req,res)=>{
         res.send(response)
     }
     catch (err) {
-        console.log('ERR::::::', err)
-        res.status(400).json({error:"Internal server error"})
+        res.status(400).json({error:err.message})
     }
 })
 router.patch('/update',validateMemberUpdate,async(req,res)=>{
@@ -35,8 +34,7 @@ router.patch('/update',validateMemberUpdate,async(req,res)=>{
         res.send(response)
     }
     catch (err) {
-        console.log('ERR::::::', err)
-        res.status(400).json({error:"Internal server error"})
+        res.status(400).json({error:err.message})
     }
 })
 
