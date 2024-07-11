@@ -16,6 +16,7 @@ router.post('/create',validateCreate, async (req, res) => {
     }
     catch (err) {
         console.log('ERR::::::', err)
+        res.status(400).json({error:err.message})
     }
 
 })
@@ -26,8 +27,7 @@ router.patch('/update',validateUpdateQueue, async (req, res) => {
         res.send(response)
     }
     catch (err) {
-        console.log('ERR::::::', err)
-        res.status(400).json({error:"Internal server error"})
+        res.status(400).json({error:err.message})
     }
 
 })
@@ -38,8 +38,9 @@ router.delete('/delete',validateDelete, async (req, res) => {
         res.send(response)
     }
     catch (err) {
-        console.log('ERR::::::', err)
-        throw new Error(err)
+        res.status(400).json({error:err.message})
+
+
     }
 
 })
