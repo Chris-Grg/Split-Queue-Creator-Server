@@ -1,6 +1,7 @@
 // controllers/queueController.js
 const fs = require('fs');
 const db = require('../db/connection');
+const ami = require('./amiController')
 
 const createNewQueue = async (queue) => {
     return new Promise((resolve, reject) => {
@@ -119,6 +120,7 @@ wrapuptime=${row.wrapuptime} \n
                                 console.error('Error writing to queue.conf:', err);
                                 reject(err);
                             } else {
+                                ami.dialplanReload();  // reload the dialplan after creating the queue.conf file to apply the changes.
                                 resolve('queue.conf file created and dialplan reloaded successfully');
                             }
                         });
