@@ -5,18 +5,24 @@ const addMembers =(queue, name)=>{
     return new Promise((resolve,reject)=>{
         const selectQuery =`SELECT * from members WHERE members.queue = ? AND members.name = ?`
         db.query(selectQuery, [queue,name],(err,res)=>{
-            if(err)  reject(err);
+            if(err) reject(err);
             if(res.length>0){
                  reject(new Error('Member already exists'));
             }
-            const insertQuery = `INSERT INTO members (queue,name) VALUES (?,?)`
-            db.query(insertQuery, [queue,name],(err,res)=>{
-                if(err) reject(err);
-                else{
-                    queueController.createConfigFile()
-                    resolve('member added')
-                };
-            })
+            else{
+                const insertQuery = `INSERT INTO members (queue,name) VALUES (?,?)`
+                db.query(insertQuery, [queue,name],(err,res)=>{
+                    if(err) reject(err);
+                    else{
+                        queueController.createConfigFile()
+                            .then(() => resolve('Member added'))
+                            .catch(configErr => {
+                                console.error('Error creating config file:', configErr);
+                                reject(new Error('Member added but failed to update config'));
+                            });
+                    };
+                })
+            }
         })
     })
 }
@@ -31,9 +37,14 @@ const selectMemberQuery = `SELECT * from members WHERE members.queue = ? AND mem
         const deleteQuery = `DELETE FROM members WHERE members.queue =? AND members.name =?`
         db.query(deleteQuery, [queue,name],(err,res)=>{
             if(err) return reject(err);
-            else{queueController.createConfigFile()
-
-            resolve(`name: ${name} queue: ${queue} deleted`);}
+            else{
+                queueController.createConfigFile()
+                .then(() =>resolve(`name: ${name} queue: ${queue} deleted`))
+                .catch(configErr => {
+                    console.error('Error creating config file:', configErr);
+                    reject(new Error('Member added but failed to update config'));
+                });
+            }
         })
     })
 
@@ -56,8 +67,14 @@ return new Promise((resolve,reject)=>{
         const updateQuery = `UPDATE members SET members.name =?, members.queue=? WHERE members.queue =? AND members.name =?`
         db.query(updateQuery, [newname,newqueue,queue,name],(err,res)=>{
             if(err) return reject(err);
-            else{queueController.createConfigFile()
-            resolve(`Queue: ${queue} Name: ${name} updated`);}
+            else{
+                queueController.createConfigFile()
+                .then(() =>resolve(`Queue: ${queue} Name: ${name} updated`))
+                .catch(configErr => {
+                        console.error('Error creating config file:', configErr);
+                        reject(new Error('Member added but failed to update config'));
+                    });
+                }
         })
     })
     })
